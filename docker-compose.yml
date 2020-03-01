@@ -1,0 +1,65 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    image: warehousesystem/app:latest
+    networks:
+     - appnet
+    volumes:
+     - .:/var/www/html
+    working_dir: /var/www/html
+    ports:
+     - ${APP_PORT}:80
+  cache:
+    image: redis:alpine
+    networks:
+     - appnet
+    volumes:
+     - cachedata:/data
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+     - ${DB_PORT}:3306
+    networks:
+     - appnet
+    volumes:
+     - dbdata:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    networks:
+     - appnet
+    ports:
+      - '${PHPMYADMIN_PORT}:80'
+    links:
+     - db
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+  node:
+    build:
+      context: ./docker/node
+      dockerfile: Dockerfile
+    image: warehousesystem/node:latest
+    networks:
+    - appnet
+    volumes:
+    - .:/opt
+    working_dir: /opt
+    command: echo hi
+networks:
+  appnet:
+    driver: bridge
+volumes:
+  dbdata:
+    driver: local
+  cachedata:
+    driver: local
