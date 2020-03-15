@@ -1,3 +1,4 @@
+pipeline {
 node('master') {
     try {
         stage('build') {
@@ -29,4 +30,5 @@ node('master') {
         // Any cleanup operations needed, whether we hit an error or not
         sh './develop down'
     }
+}
 }
