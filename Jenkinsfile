@@ -3,20 +3,21 @@
 node('master') {
     try {
         stage('build') {
+            git url:'git@github.com:DevAhmedHelmy/laravelDocker'
             // Checkout the app at the given commit sha from the webhook
-            checkout scm
+            sh "./develop up -d"
 
             // Install dependencies, create a new .env file and generate a new key, just for testing
-            sh "composer install"
+            sh "./devevlop composer install"
             sh "cp .env.example .env"
-            sh "php artisan key:generate"
+            sh "./develop art key:generate"
 
             // Run any static asset building, if needed
             // sh "npm install && gulp --production"
         }
         stage('test') {
             // Run any testing suites
-            sh "./vendor/bin/phpunit"
+            sh "APP_ENV=testing ./develop test"
         }
 
         stage('deploy') {
@@ -28,5 +29,6 @@ node('master') {
         throw error
     } finally {
         // Any cleanup operations needed, whether we hit an error or not
+        sh './develop down'
     }
 }
