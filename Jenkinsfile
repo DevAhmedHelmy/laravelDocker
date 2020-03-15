@@ -1,4 +1,3 @@
-pipeline {
 node('master') {
     try {
         stage('build') {
@@ -31,4 +30,4 @@ node('master') {
         sh './develop down'
     }
 }
-}
+
